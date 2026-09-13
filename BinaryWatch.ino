@@ -1,7 +1,7 @@
-#include "Watchy_Mario.h"
+#include "Watchy_Binary.h"
 #include "settings.h"
 
-WatchyMario watchy(settings);
+WatchyBinary watchy(settings);
 
 void setup(){
   watchy.init();

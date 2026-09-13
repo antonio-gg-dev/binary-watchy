@@ -19,8 +19,8 @@ void WatchyBinary::drawWatchFace() {
 
     drawBits(currentTime.Day, 5, SMALL_BIT_SIZE, TOP_DAY_X, TOP_Y);
     drawBits(batteryLevel(), 2, SMALL_BIT_SIZE, TOP_BATTERY_X, TOP_Y);
-    drawBits(currentTime.Wday == 1 ? 7 : currentTime.Wday - 1, 3,
-             SMALL_BIT_SIZE, BOTTOM_WEEKDAY_X, BOTTOM_Y);
+    
+    drawBits(currentTime.Wday == 1 ? 7 : currentTime.Wday - 1, 3, SMALL_BIT_SIZE, BOTTOM_WEEKDAY_X, BOTTOM_Y);
     drawBits(currentTime.Month, 4, SMALL_BIT_SIZE, BOTTOM_MONTH_X, BOTTOM_Y);
 
     drawBits(currentTime.Hour, 5, LARGE_BIT_SIZE, HOUR_X, HOUR_Y);

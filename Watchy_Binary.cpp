@@ -14,6 +14,18 @@ const int16_t MINUTE_Y = 102;
 }
 
 void WatchyBinary::drawWatchFace() {
+    // Desactiva el acelerómetro BMA423 porque esta esfera no utiliza pasos, movimiento ni inclinación.
+    // see: https://github.com/sqfmi/Watchy/blob/master/src/bma.cpp#L164-L172
+    sensor.disableAccel();
+
+    // Desactiva Wi-Fi durante el funcionamiento normal de la esfera.
+    // see: https://github.com/sqfmi/Watchy/blob/master/src/Watchy.cpp#L736-L739
+    WiFi.mode(WIFI_OFF);
+
+    // Desactiva Bluetooth durante el funcionamiento normal de la esfera.
+    // see: https://github.com/sqfmi/Watchy/blob/master/src/Watchy.cpp#L736-L739
+    btStop();
+
     display.fillScreen(GxEPD_WHITE);
     display.setTextColor(GxEPD_BLACK);
 

@@ -5,6 +5,8 @@
 #define GMT_OFFSET_SEC 3600 * 2 // Mainland Spain uses UTC+2 during CEST and UTC+1 during CET
 
 watchySettings settings{
+    // No solicita datos meteorológicos: esta esfera no invoca getWeatherData().
+    // see: https://github.com/sqfmi/Watchy/blob/master/src/Watchy.cpp#L657-L721
     .cityID = "",
     .lat = "",
     .lon = "",
@@ -15,7 +17,9 @@ watchySettings settings{
     .weatherUpdateInterval = 30,
     .ntpServer = NTP_SERVER,
     .gmtOffset = GMT_OFFSET_SEC,
-    .vibrateOClock = true,
+    // Desactiva la vibración automática al inicio de cada hora.
+    // see: https://github.com/sqfmi/Watchy/blob/master/src/Watchy.cpp#L43-L53
+    .vibrateOClock = false,
 };
 
 #endif

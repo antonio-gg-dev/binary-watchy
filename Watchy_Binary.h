@@ -1,15 +1,7 @@
 #ifndef WATCHY_BINARY_H
 #define WATCHY_BINARY_H
 
-#ifdef WATCHY_SIM
-    #ifdef _WIN32
-        #include "../../Watchy.h"
-    #else
-        #include "../../Watchy_SDL2.h"
-    #endif
-#else
 #include <Watchy.h>
-#endif
 
 class WatchyBinary : public Watchy {
 public:

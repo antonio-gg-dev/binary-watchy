@@ -26,6 +26,16 @@ const char *const WEEKDAY_LABELS[] = {"DO", "LU", "MA", "MI",
                                       "JU", "VI", "SA"};
 const char *const MONTH_LABELS[] = {"EN", "FE", "MR", "AB", "MY", "JN",
                                     "JL", "AG", "SE", "OC", "NO", "DI"};
+
+const float BATTERY_VOLTAGES[] = {
+    3.20f, 3.41f, 3.49f, 3.51f, 3.53f, 3.54f, 3.56f, 3.58f,
+    3.59f, 3.61f, 3.63f, 3.64f, 3.66f, 3.70f, 3.73f, 3.76f,
+    3.80f, 3.86f, 3.88f, 3.92f, 3.97f};
+const uint8_t BATTERY_PERCENTAGES[] = {
+    0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50,
+    55, 60, 65, 70, 75, 80, 85, 90, 95, 99};
+const uint8_t BATTERY_CURVE_POINT_COUNT =
+    sizeof(BATTERY_VOLTAGES) / sizeof(BATTERY_VOLTAGES[0]);
 }
 
 void WatchyBinary::drawWatchFace() {
@@ -190,15 +200,15 @@ void WatchyBinary::drawBatteryValue(int16_t rightX, int16_t baseline) {
 }
 
 uint8_t WatchyBinary::batteryLevel() {
-    const float voltage = getBatteryVoltage();
+    const uint8_t percentage = batteryPercentage();
 
-    if (voltage >= 4.0f) {
+    if (percentage >= 75) {
         return 3;
     }
-    if (voltage >= 3.6f) {
+    if (percentage >= 50) {
         return 2;
     }
-    if (voltage >= 3.2f) {
+    if (percentage >= 25) {
         return 1;
     }
     return 0;
@@ -207,29 +217,26 @@ uint8_t WatchyBinary::batteryLevel() {
 uint8_t WatchyBinary::batteryPercentage() {
     const float voltage = getBatteryVoltage();
 
-    // Approximation for a LiPo discharge curve; the voltage is not an exact
-    // state-of-charge measurement because it varies with load and temperature.
-    static const float voltages[] = {3.30f, 3.50f, 3.60f, 3.70f, 3.80f,
-                                     3.90f, 4.00f, 4.10f, 4.20f};
-    static const uint8_t percentages[] = {0, 5, 10, 20, 40,
-                                          60, 80, 90, 100};
-
-    if (voltage <= voltages[0]) {
-        return percentages[0];
+    if (voltage <= BATTERY_VOLTAGES[0]) {
+        return BATTERY_PERCENTAGES[0];
     }
-    if (voltage >= voltages[8]) {
-        return percentages[8];
+    if (voltage >= BATTERY_VOLTAGES[BATTERY_CURVE_POINT_COUNT - 1]) {
+        return BATTERY_PERCENTAGES[BATTERY_CURVE_POINT_COUNT - 1];
     }
 
-    for (uint8_t index = 1; index < 9; ++index) {
-        if (voltage <= voltages[index]) {
-            const float range = voltages[index] - voltages[index - 1];
-            const float position = (voltage - voltages[index - 1]) / range;
-            return static_cast<uint8_t>(
-                percentages[index - 1] +
-                position * (percentages[index] - percentages[index - 1]));
+    for (uint8_t index = 1; index < BATTERY_CURVE_POINT_COUNT; ++index) {
+        if (voltage <= BATTERY_VOLTAGES[index]) {
+            const float voltageRange =
+                BATTERY_VOLTAGES[index] - BATTERY_VOLTAGES[index - 1];
+            const float position =
+                (voltage - BATTERY_VOLTAGES[index - 1]) / voltageRange;
+            const float percentage =
+                BATTERY_PERCENTAGES[index - 1] +
+                position * (BATTERY_PERCENTAGES[index] -
+                            BATTERY_PERCENTAGES[index - 1]);
+            return static_cast<uint8_t>(percentage + 0.5f);
         }
     }
 
-    return 100;
+    return BATTERY_PERCENTAGES[BATTERY_CURVE_POINT_COUNT - 1];
 }
